@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uni-Feed | เข้าสู่ระบบ</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .login-box {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 40px 50px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 320px;
+    }
+
+    .login-box h1 {
+      margin-bottom: 25px;
+      font-size: 26px;
+      color: #fff;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+    }
+
+    input::placeholder {
+      color: #9ca3af;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #3b82f6;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+    }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #dbeafe;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h1>🔐 Uni-Feed</h1>
+    <input type="text" id="username" placeholder="ชื่อผู้ใช้">
+    <input type="password" id="password" placeholder="รหัสผ่าน">
+    <select id="role">
+      <option value="student">นักศึกษา</option>
+      <option value="teacher">อาจารย์</option>
+    </select>
+    <button id="loginBtn">เข้าสู่ระบบ</button>
+    <div class="footer">© 2025 Uni-Feed</div>
+    <!-- registration UI toggle -->
+    <div style="text-align:center;margin-top:12px;color:#dbeafe">
+      <a href="#" id="showRegisterLink" style="color:#fff;text-decoration:underline">ยังไม่มีบัญชี? สมัครสมาชิก</a>
+    </div>
+  </div>
+
+  <!-- Register modal-like box (simple inline) -->
+  <div class="login-box" id="registerBox" style="display:none;">
+    <h1>📝 สมัครสมาชิก</h1>
+    <input type="text" id="reg_name" placeholder="ชื่อ-นามสกุล">
+    <input type="text" id="reg_username" placeholder="ชื่อผู้ใช้ (username)">
+    <input type="password" id="reg_password" placeholder="รหัสผ่าน">
+    <input type="password" id="reg_confirm" placeholder="ยืนยันรหัสผ่าน">
+    <select id="reg_role">
+      <option value="student">นักศึกษา</option>
+      <option value="teacher">อาจารย์</option>
+    </select>
+    <button id="registerBtn">สมัครสมาชิก</button>
+    <div style="text-align:center;margin-top:8px;color:#dbeafe"><a href="#" id="showLoginLink" style="color:#fff;text-decoration:underline">กลับไปหน้าล็อกอิน</a></div>
+  </div>
+
+  <script>
+    // Simple client-side user storage. NOT secure for production — localStorage only.
+    const USERS_KEY = 'unifeed_users_v1';
+    const CURRENT_USER = 'unifeed_current_user';
+
+    async function hashPassword(pw){
+      const enc = new TextEncoder();
+      const data = enc.encode(pw);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+
+    function loadUsers(){
+      try{ const raw = localStorage.getItem(USERS_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ localStorage.removeItem(USERS_KEY); return {}; }
+    }
+    function saveUsers(obj){ localStorage.setItem(USERS_KEY, JSON.stringify(obj)); }
+    function setCurrentUser(user){ localStorage.setItem(CURRENT_USER, JSON.stringify(user)); }
+    function getCurrentUser(){ try{ const r = localStorage.getItem(CURRENT_USER); return r? JSON.parse(r): null;}catch(e){return null;} }
+    function clearCurrentUser(){ localStorage.removeItem(CURRENT_USER); }
+
+    async function register(){
+      const name = document.getElementById('reg_name').value.trim();
+      const username = document.getElementById('reg_username').value.trim();
+      const password = document.getElementById('reg_password').value;
+      const confirm = document.getElementById('reg_confirm').value;
+      const role = document.getElementById('reg_role').value;
+      if(!name || !username || !password){ alert('กรุณากรอกข้อมูลให้ครบ'); return; }
+      if(password !== confirm){ alert('รหัสผ่านไม่ตรงกัน'); return; }
+      const users = loadUsers();
+      if(users[username]){ alert('ชื่อผู้ใช้นี้มีผู้ใช้แล้ว เลือกชื่ออื่น'); return; }
+      const passHash = await hashPassword(password);
+      users[username] = { username, name, role, passHash, created: Date.now() };
+      saveUsers(users);
+      setCurrentUser({ username, name, role });
+      alert('สมัครสมาชิกสำเร็จ: ' + name);
+      // redirect according to role
+      if(role === 'teacher') window.location.href = 'index_teacher.html';
+      else window.location.href = 'index_student.html';
+    }
+
+    async function login(){
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const roleSelect = document.getElementById('role');
+      const chosenRole = roleSelect ? roleSelect.value : null;
+      if(!username || !password){ alert('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน'); return; }
+      const users = loadUsers();
+      const u = users[username];
+      if(!u){ alert('ไม่พบผู้ใช้'); return; }
+      const hash = await hashPassword(password);
+      if(hash !== u.passHash){ alert('รหัสผ่านไม่ถูกต้อง'); return; }
+      // role check: if selected role differs from registered, warn but allow
+      if(chosenRole && chosenRole !== u.role){ console.warn('role mismatch: selected', chosenRole, 'registered', u.role); }
+      setCurrentUser({ username: u.username, name: u.name, role: u.role });
+      alert('เข้าสู่ระบบสำเร็จ: ' + u.name);
+      if(u.role === 'teacher') window.location.href = 'index_teacher.html';
+      else window.location.href = 'index_student.html';
+    }
+
+    // UI helpers
+    function showRegister(){ document.getElementById('registerBox').style.display = 'block'; document.querySelector('.login-box').style.display = 'none'; }
+    function showLogin(){ document.getElementById('registerBox').style.display = 'none'; document.querySelector('.login-box').style.display = 'block'; }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      // wire buttons
+      const lb = document.getElementById('loginBtn'); if(lb) lb.addEventListener('click', (e)=>{ e.preventDefault(); login(); });
+      const rb = document.getElementById('registerBtn'); if(rb) rb.addEventListener('click', (e)=>{ e.preventDefault(); register(); });
+      const showReg = document.getElementById('showRegisterLink'); if(showReg) showReg.addEventListener('click', (e)=>{ e.preventDefault(); showRegister(); });
+      const showLog = document.getElementById('showLoginLink'); if(showLog) showLog.addEventListener('click', (e)=>{ e.preventDefault(); showLogin(); });
+      // if already logged-in, redirect automatically
+      const cur = getCurrentUser();
+      if(cur){
+        try{
+          if(cur.role === 'teacher') window.location.href = 'index_teacher.html'; else window.location.href = 'index_student.html';
+        }catch(e){}
+      }
+    });
+  </script>
+  </script>
+</body>
+</html>
