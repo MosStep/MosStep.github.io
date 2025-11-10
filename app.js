@@ -314,8 +314,26 @@ function renderMyPosts(){
   });
 }
 
-// init on load
-document.addEventListener('DOMContentLoaded', ()=>{
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+  // [เพิ่มโค้ดนี้ก่อน renderDashboard();]
+  if(loadPosts().length === 0) {
+    // ตัวอย่างประกาศ ถ้ายังไม่มีข้อมูล
+    const examplePost = {
+      id: Date.now(),
+      author: "อาจารย์สมชาย",
+      title: "ยินดีต้อนรับเปิดเทอม",
+      body: "ขอให้นักศึกษาทุกคนตั้งใจเรียนและมีความสุขกับการเรียนในเทอมนี้",
+      tags: ["#กิจกรรม","#CS101"],
+      date: new Date().toISOString(),
+      priority: "ทั่วไป"
+    };
+    savePosts([examplePost]);
+    addTagsToStore(examplePost.tags);
+  }
+
+ 
+});
   renderDashboard();
   renderMyPosts();
 
@@ -367,3 +385,4 @@ window.forceRefresh = function(){
   try{ renderDashboard(); }catch(e){}
   try{ renderMyPosts(); }catch(e){}
 }
+
