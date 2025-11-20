@@ -385,4 +385,50 @@ window.forceRefresh = function(){
   try{ renderDashboard(); }catch(e){}
   try{ renderMyPosts(); }catch(e){}
 }
+window.postAnnouncementExternal = function() {
+  // ดึงค่าจากฟอร์ม
+  const author = document.getElementById('author').value.trim();
+  const title = document.getElementById('title').value.trim();
+  const content = document.getElementById('content').value.trim();
+  const tags = document.getElementById('tags').value.trim();
+  const scheduledDate = document.getElementById('scheduledDate').value;
+  const scheduledTime = document.getElementById('scheduledTime').value;
+  const priority = document.getElementById('priority').value;
+
+  // ตรวจสอบความครบถ้วน
+  if (!author || !title || !content || !scheduledDate) {
+    alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+    return;
+  }
+
+  // สร้างประกาศ (ตรงนี้สามารถเพิ่มขั้นตอนเก็บลง localStorage หรือส่งไป backend ได้)
+  const announcement = {
+    author,
+    title,
+    content,
+    tags,
+    scheduledDate,
+    scheduledTime,
+    priority,
+    createdAt: new Date().toISOString()
+  };
+
+  // ตัวอย่าง: เก็บประกาศไว้ใน localStorage
+  let posts = [];
+  try {
+    posts = JSON.parse(localStorage.getItem('unifeed_posts_teacher') || '[]');
+  } catch(e) {}
+  posts.push(announcement);
+  localStorage.setItem('unifeed_posts_teacher', JSON.stringify(posts));
+
+  alert('สร้างประกาศสำเร็จ!');
+  // ล้างฟอร์ม
+  document.getElementById('author').value = '';
+  document.getElementById('title').value = '';
+  document.getElementById('content').value = '';
+  document.getElementById('tags').value = '';
+  document.getElementById('scheduledDate').value = '';
+  document.getElementById('scheduledTime').value = '';
+  document.getElementById('priority').value = 'ทั่วไป';
+};
 
