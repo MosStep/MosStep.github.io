@@ -5,264 +5,232 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!DOCTYPE html>
-  <html lang="th">
-  <head>
-      <link rel="manifest" href="manifest.json">
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni-Feed | กระดานข่าวรวมศูนย์อัจฉริยะ (อาจารย์)</title>
-    <style>
-      body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f7f8fa;
-        display: flex;
-        height: 100vh;
-      }
-
-      /* เมนูฝั่งซ้าย */
-      .sidebar {
-        width: 250px;
-        background-color: #1e293b;
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 20px 0;
-      }
-
-      .sidebar h2 {
-        text-align: center;
-        font-size: 22px;
-        margin-bottom: 30px;
-      }
-
-      .menu {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      .menu li {
-        padding: 12px 25px;
-        cursor: pointer;
-        transition: 0.3s;
-      }
-
-      .menu li:hover, .menu li.active {
-        background-color: #334155;
-      }
-
-      .logout {
-        text-align: center;
-        padding: 10px;
-        background-color: #ef4444;
-        cursor: pointer;
-        transition: 0.3s;
-      }
-
-      .logout:hover {
-        background-color: #dc2626;
-      }
-
-      /* เนื้อหาฝั่งขวา */
-      .main {
-        flex: 1;
-        padding: 20px 40px;
-        overflow-y: auto;
-      }
-
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .notification {
-        position: relative;
-        cursor: pointer;
-      }
-
-      .notification .dot {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: red;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-      }
-
-      .feed {
-        background-color: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      }
-
-      .post {
-        border-bottom: 1px solid #e5e7eb;
-        padding: 10px 0;
-      }
-
-      .post:last-child {
-        border-bottom: none;
-      }
-
-      .post h3 {
-        margin: 0;
-        color: #111827;
-      }
-
-      .post p {
-        margin: 5px 0 0 0;
-        color: #4b5563;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- เมนูฝั่งซ้าย -->
-    <div class="sidebar">
-      <div>
-        <h2>Uni-Feed (อาจารย์)</h2>
-        <ul class="menu">
-          <li class="active" onclick="showPage('dashboard', this)">🏠 Dashboard</li>
-          <li onclick="showPage('search', this)">🔍 ค้นหา</li>
-          <li onclick="showPage('create', this)">📝 สร้างประกาศ</li>
-          <li onclick="showPage('myposts', this)">📂 ประกาศของฉัน</li>
-          <li onclick="showPage('follow', this)">⭐ ติดตาม</li>
-          <li onclick="showPage('login', this)">ล็อกอิน</li>
-        </ul>
-      </div>
-      <div class="logout" onclick="logout()">🚪 ออกจากระบบ</div>
+  <title>Uni-Feed | กระดานข่าวรวมศูนย์อัจฉริยะ (อาจารย์)</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f8fa;
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #1e293b;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 0;
+    }
+    .sidebar h2 { text-align: center; font-size: 22px; margin-bottom: 30px;}
+    .menu { list-style: none; padding: 0; margin: 0; }
+    .menu li { padding: 12px 25px; cursor: pointer; transition: 0.3s; }
+    .menu li:hover, .menu li.active { background-color: #334155; }
+    .logout {
+      text-align: center;
+      padding: 10px;
+      background-color: #ef4444;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .logout:hover { background-color: #dc2626;}
+    .main {
+      flex: 1;
+      padding: 20px 40px;
+      overflow-y: auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .notification {
+      position: relative;
+      cursor: pointer;
+    }
+    .notification .dot {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: red;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .feed {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .post {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 0;
+    }
+    .post:last-child { border-bottom: none; }
+    .post h3 { margin: 0; color: #111827; }
+    .post p { margin: 5px 0 0 0; color: #4b5563; }
+    .tags {margin-top:8px}
+    .tags .tag { display:inline-block; background:#eef2ff; color:#3730a3; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:13px }
+    .signature { margin-top:8px; font-size:13px; color:#6b7280; font-style:italic }
+    table { width:100%; border-collapse:collapse; margin-top:12px;}
+    th, td { border:1px solid #eee; padding:8px 4px; font-size:13px }
+    th { background:#f3f4f6 }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div>
+      <h2>Uni-Feed (อาจารย์)</h2>
+      <ul class="menu">
+        <li class="active" onclick="showPage('dashboard', this)">🏠 Dashboard</li>
+        <li onclick="showPage('search', this)">🔍 ค้นหา</li>
+        <li onclick="showPage('create', this)">📝 สร้างประกาศ</li>
+        <li onclick="showPage('myposts', this)">📂 ประกาศของฉัน</li>
+        <li onclick="showPage('follow', this)">⭐ ติดตาม</li>
+        <li onclick="showPage('login', this)">ล็อกอิน</li>
+      </ul>
     </div>
+    <div class="logout" onclick="logout()">🚪 ออกจากระบบ</div>
+  </div>
 
-    <!-- เนื้อหาหลัก -->
-    <div class="main">
-      <div class="header">
-        <h1 id="pageTitle">Dashboard</h1>
-        <div style="display:flex;align-items:center;gap:12px">
-          <div class="notification" onclick="showNotifications()">🔔<div class="dot" id="notifDot"></div></div>
-          <div id="currentUserDisplay" style="font-size:14px;color:#374151"></div>
-        </div>
-      </div>
-      <div id="lastUpdated" style="font-size:12px;color:#6b7280;margin-top:8px">Last updated: -</div>
-
-      <!-- Dashboard -->
-      <div id="dashboard" class="feed">
-        <div id="postsContainer"></div>
-      </div>
-
-      <!-- Search -->
-      <div id="search" class="feed" style="display:none">
-        <input type="text" id="searchBox" placeholder="พิมพ์คำค้นหรือ #แท็ก..." style="width:100%;padding:10px;border:1px solid #ccc;border-radius:5px">
-        <p style="margin-top:10px;color:#6b7280">🔎 ผลการค้นหาจะแสดงที่นี่...</p>
-      </div>
-
-      <!-- Create Post -->
-      <div id="create" class="feed" style="display:none">
-  <h3>สร้างประกาศใหม่</h3>
-
-  <input type="text" id="author" placeholder="ชื่ออาจารย์/ผู้ประกาศ" style="width:100%;padding:10px;margin-top:10px;border:1px solid #ccc;border-radius:5px">
-
-  <input type="text" id="title" placeholder="หัวข้อ" style="width:100%;padding:10px;margin-top:10px;border:1px solid #ccc;border-radius:5px">
-
-  <textarea id="content" placeholder="รายละเอียด" style="width:100%;height:100px;margin-top:10px;padding:10px;border:1px solid #ccc;border-radius:5px"></textarea>
-
-  <input type="text" id="tags" placeholder="#แท็ก คั่นด้วยช่องว่าง เช่น #CS101 #กิจกรรม" style="width:100%;padding:10px;margin-top:10px;border:1px solid #ccc;border-radius:5px">
-
-  <label style="display:block;margin-top:10px;font-size:13px;color:#374151">เลือกวันที่ (ปฏิทิน) และเวลาที่ต้องการแสดง</label>
-  <input type="date" id="scheduledDate" required style="width:100%;padding:10px;margin-top:6px;border:1px solid #ccc;border-radius:5px">
-  <input type="time" id="scheduledTime" placeholder="เวลา (ไม่บังคับ)" pattern="[0-2][0-9]:[0-5][0-9]" title="รูปแบบเวลา HH:MM (24 ชั่วโมง)" style="width:100%;padding:10px;margin-top:6px;border:1px solid #ccc;border-radius:5px">
-  <small style="color:#6b7280;display:block;margin-top:6px">หมายเหตุ: เลือกวันที่จากปฏิทิน แล้วเลือกเวลา (ถ้าว่างจะถือเป็น 00:00)</small>
-
-  <select id="priority" style="margin-top:10px;padding:8px;border-radius:5px">
-    <option value="ทั่วไป">ทั่วไป</option>
-    <option value="สำคัญ">สำคัญ</option>
-    <option value="ด่วนมาก">ด่วนมาก!</option>
-  </select>
-
-  <button onclick="postAnnouncement()" style="display:block;margin-top:10px;padding:10px 20px;background-color:#2563eb;color:#fff;border:none;border-radius:5px;cursor:pointer">ประกาศ</button>
-</div>
-
-      <!-- My Posts -->
-      <div id="myposts" class="feed" style="display:none">
-        <h3>ประกาศของฉัน</h3>
-        <p>ยังไม่มีประกาศ</p>
-      </div>
-
-      <!-- Follow -->
-      <div id="follow" class="feed" style="display:none">
-        <h3>เลือกสิ่งที่ต้องการติดตาม</h3>
-        <div id="followTags"></div>
-      </div>
-
-      <!-- Login (placeholder) -->
-      <div id="login" class="feed" style="display:none">
-        <h3>ล็อกอิน</h3>
-        <p>กรุณาไปที่หน้าล็อกอินเพื่อเข้าสู่ระบบ</p>
-        <button onclick="window.location.href='index.html'" style="display:inline-block;margin-top:10px;padding:8px 12px;background:#2563eb;color:#fff;border:none;border-radius:5px;cursor:pointer">ไปยังหน้าล็อกอิน</button>
+  <div class="main">
+    <div class="header">
+      <h1 id="pageTitle">Dashboard</h1>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="notification" onclick="showNotifications()">🔔<div class="dot" id="notifDot"></div></div>
+        <div id="currentUserDisplay" style="font-size:14px;color:#374151"></div>
       </div>
     </div>
+    <div id="lastUpdated" style="font-size:12px;color:#6b7280;margin-top:8px">Last updated: -</div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="feed">
+      <div id="postsContainer"></div>
+    </div>
+
+    <!-- Search -->
+    <div id="search" class="feed" style="display:none">
+      <input type="text" id="searchBox" placeholder="พิมพ์คำค้นหรือ #แท็ก..." style="width:100%;padding:10px;border:1px solid #ccc;border-radius:5px">
+      <p style="margin-top:10px;color:#6b7280">🔎 ผลการค้นหาจะแสดงที่นี่...</p>
+    </div>
+
+    <!-- Create Post -->
+    <div id="create" class="feed" style="display:none">
+      <h3>สร้างประกาศใหม่</h3>
+      <input type="text" id="author" placeholder="ชื่ออาจารย์/ผู้ประกาศ" style="width:100%;padding:10px;margin-top:10px;border:1px solid #ccc;border-radius:5px">
+      <input type="text" id="title" placeholder="หัวข้อ" style="width:100%;padding:10px;margin-top:10px;border:1px solid #ccc;border-radius:5px">
+      <textarea id="content" placeholder="รายละเอียด" style="width:100%;height:100px;margin-top:10px;padding:10px;border:1px solid #ccc;border-radius:5px"></textarea>
+      <input type="text" id="tags" placeholder="#แท็ก คั่นด้วยช่องว่างหรือ , เช่น #CS101 #กิจกรรม" style="width:100%;padding:10px;margin-top:10px;border:1px solid #ccc;border-radius:5px">
+      <label style="display:block;margin-top:10px;font-size:13px;color:#374151">เลือกวันที่ (ปฏิทิน) และเวลาที่ต้องการแสดง</label>
+      <input type="date" id="scheduledDate" required style="width:100%;padding:10px;margin-top:6px;border:1px solid #ccc;border-radius:5px">
+      <input type="time" id="scheduledTime" placeholder="เวลา (ไม่บังคับ)" pattern="[0-2][0-9]:[0-5][0-9]" title="รูปแบบเวลา HH:MM (24 ชั่วโมง)" style="width:100%;padding:10px;margin-top:6px;border:1px solid #ccc;border-radius:5px">
+      <small style="color:#6b7280;display:block;margin-top:6px">หมายเหตุ: เลือกวันที่จากปฏิทิน แล้วเลือกเวลา (ถ้ามี)</small>
+      <select id="priority" style="margin-top:10px;padding:8px;border-radius:5px">
+        <option value="ทั่วไป">ทั่วไป</option>
+        <option value="สำคัญ">สำคัญ</option>
+        <option value="ด่วนมาก">ด่วนมาก!</option>
+      </select>
+      <button onclick="postAnnouncement()" style="display:block;margin-top:10px;padding:10px 20px;background-color:#2563eb;color:#fff;border:none;border-radius:5px;cursor:pointer">ประกาศ</button>
+    </div>
+
+    <!-- My Posts -->
+    <div id="myposts" class="feed" style="display:none">
+      <h3>ประกาศของฉัน</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>วันที่</th>
+            <th>หัวข้อ</th>
+            <th>แท็ก</th>
+            <th>ผู้ประกาศ</th>
+            <th>ความสำคัญ</th>
+            <th>เนื้อหา</th>
+          </tr>
+        </thead>
+        <tbody id="postsTableBody">
+          <!-- rows generated by renderMyPosts() -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Follow -->
+    <div id="follow" class="feed" style="display:none">
+      <h3>เลือกสิ่งที่ต้องการติดตาม</h3>
+      <div id="followTags"></div>
+    </div>
+
+    <!-- Login (placeholder) -->
+    <div id="login" class="feed" style="display:none">
+      <h3>ล็อกอิน</h3>
+      <p>กรุณาไปที่หน้าล็อกอินเพื่อเข้าสู่ระบบ</p>
+      <button onclick="window.location.href='index.html'" style="display:inline-block;margin-top:10px;padding:8px 12px;background:#2563eb;color:#fff;border:none;border-radius:5px;cursor:pointer">ไปหน้า Login</button>
+    </div>
+  </div>
 
   <script>
-      function showPage(pageId, el) {
-        document.querySelectorAll('.feed').forEach(div => div.style.display = 'none');
-        const page = document.getElementById(pageId);
-        if (page) page.style.display = 'block';
-        document.getElementById('pageTitle').innerText = pageId.charAt(0).toUpperCase() + pageId.slice(1);
-        document.querySelectorAll('.menu li').forEach(li => li.classList.remove('active'));
-        if (el && el.classList) el.classList.add('active');
-        // if opening search, focus the search box and apply current query
-        if(pageId === 'search'){
-          const sb = document.getElementById('searchBox');
-          if(sb){ sb.focus(); renderDashboard(sb.value.trim()); }
-        }
+    function showPage(pageId, el) {
+      document.querySelectorAll('.feed').forEach(div => div.style.display = 'none');
+      const page = document.getElementById(pageId);
+      if (page) page.style.display = 'block';
+      document.getElementById('pageTitle').innerText = pageId.charAt(0).toUpperCase() + pageId.slice(1);
+      document.querySelectorAll('.menu li').forEach(li => li.classList.remove('active'));
+      if (el && el.classList) el.classList.add('active');
+      // search focus
+      if(pageId === 'search'){
+        const sb = document.getElementById('searchBox');
+        if(sb){ sb.focus(); renderDashboard(sb.value.trim()); }
       }
-
-      function showNotifications() {
-        if(typeof window.showNotificationsShared === 'function'){
-          window.showNotificationsShared();
-          return;
-        }
-        alert('คุณมี 1 การแจ้งเตือนใหม่: #CS101 ยกเลิกคลาสวันนี้');
-        const dot = document.getElementById('notifDot');
-        if (dot) dot.style.display = 'none';
+      // render my posts table when needed
+      if(pageId === 'myposts'){
+        if(typeof window.renderMyPosts === 'function'){ window.renderMyPosts(); }
       }
+    }
 
-      function postAnnouncement() {
-        // delegate to external implementation in app.js
-        if (typeof window.postAnnouncementExternal === 'function') {
-          return window.postAnnouncementExternal();
-        }
+    function showNotifications() {
+      if(typeof window.showNotificationsShared === 'function'){
+        window.showNotificationsShared();
+        return;
+      }
+      alert('คุณมี 1 การแจ้งเตือนใหม่: #CS101 ยกเลิกคลาสวันนี้');
+      const dot = document.getElementById('notifDot');
+      if (dot) dot.style.display = 'none';
+    }
+
+    function postAnnouncement() {
+      // use function from app.js
+      if (typeof window.postAnnouncementExternal === 'function') {
+        window.postAnnouncementExternal();
+        // หลังจากโพสต์ ลองไปหน้า dashboard เพื่อ refresh หรือ myposts
+        showPage('dashboard');
+        showPage('myposts');
+      } else {
         alert('ฟังก์ชันยังไม่พร้อมใช้งาน');
       }
+    }
 
-      function logout() {
-        try{ localStorage.removeItem('unifeed_current_user'); }catch(e){}
-        alert('ออกจากระบบเรียบร้อย');
-        window.location.href = 'index.html';
-      }
+    function logout() {
+      try{ localStorage.removeItem('unifeed_current_user'); }catch(e){}
+      alert('ออกจากระบบเรียบร้อย');
+      window.location.href = 'index.html';
+    }
 
-      // show current user display if available
-      (function(){
-        try{
-          const raw = localStorage.getItem('unifeed_current_user');
-          if(raw){ const u = JSON.parse(raw); const el = document.getElementById('currentUserDisplay'); if(el) el.innerText = (u.name ? u.name : u.username) + (u.role? (' | ' + u.role) : ''); }
-        }catch(e){}
-      })();
+    // show current user display if available
+    (function(){
+      try{
+        const raw = localStorage.getItem('unifeed_current_user');
+        if(raw){ const u = JSON.parse(raw); const el = document.getElementById('currentUserDisplay'); if(el) el.innerText = (u.name ? u.name : u.username) + (u.role? (' | ' + u.role) : ''); }
+      }catch(e){}
+    })();
 
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js')
-          .then(() => console.log('Service Worker registered!'))
-          .catch(err => console.warn('Service Worker registration failed:', err));
-      }
-    </script>
-    <script src="./app.js"></script>
-  </body>
-  </html>
-    </div>
-
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(() => console.log('Service Worker registered!'))
+        .catch(err => console.warn('Service Worker registration failed:', err));
+    }
+  </script>
+  <script src="./app.js"></script>
+</body>
+</html>
